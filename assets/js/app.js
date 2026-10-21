@@ -37,7 +37,7 @@ const secIO=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){con
 /* =========================================================
    长卷
    ========================================================= */
-const sec=$('#scroll'),track=$('#track'),flyer=$('#flyer'),card=$('#scCard'),bar=$('#scBar');
+const sec=$('#scroll'),track=$('#track'),scX=(()=>{const w=document.createElement('div');w.className='sc-x';w.id='scX';track.before(w);w.appendChild(track);return w})(),flyer=$('#flyer'),card=$('#scCard'),bar=$('#scBar');
 let L={},route=-1,curI=-2;
 $('#scRoutes').innerHTML=`<button class="chip" aria-pressed="true" data-r="-1">全部九景</button>`+R.map((r,i)=>`<button class="chip" aria-pressed="false" data-r="${i}">${r.n}</button>`).join('');
 $$('#scRoutes .chip').forEach(b=>b.onclick=()=>{route=+b.dataset.r;$$('#scRoutes .chip').forEach(x=>x.setAttribute('aria-pressed',x===b));applyRoute();const r=R[route];if(r)goStop(O.indexOf(r.ids[0]));emit('route',route)});
@@ -48,10 +48,10 @@ function layout(){
  const intro=mob?vw*.9:Math.min(vw*.62,620),outro=mob?vw:Math.max(vw*.55,520);
  const W=intro+O.length*S2+outro;
  L={vw,vh,th,S:S2,intro,W,cx:O.map((_,i)=>intro+S2*(i+.5)),mob};
- track.style.width=W+'px';sec.style.height=(W-vw+vh)+'px';
+ track.style.width=W+'px';sec.style.height=(mob?vh:(W-vw+vh))+'px';sec.classList.toggle('mobx',mob);if(!mob)scX.scrollLeft=0;
  const vg=Math.min(S2*(mob?1:1.02),th*1.38);
  track.innerHTML=`<svg class="sc-bg" width="${W}" height="${th}" viewBox="0 0 ${W} ${th}" aria-hidden="true">${bgSVG()}</svg>
- <div class="intro-panel" style="width:${intro}px"><div class="row"><div class="big">彭城<em>七里</em></div><div class="meta"><b>一幅从北到南的长卷</b>从城西北的龟山汉墓出发，跨过故黄河，沿着彭城七里一路向南，中途向东拐去狮子山，最后到云龙山水。<br><br>向下滚动 →</div></div></div>
+ <div class="intro-panel" style="width:${intro}px"><div class="row"><div class="big">彭城<em>七里</em></div><div class="meta"><b>一幅从北到南的长卷</b>从城西北的龟山汉墓出发，跨过故黄河，沿着彭城七里一路向南，中途向东拐去狮子山，最后到云龙山水。<br><br>${mob?'向左滑动，展开长卷 →':'向下滚动 →'}</div></div></div>
  ${O.map((id,i)=>{const s=get(id);return `<div class="stop" data-id="${id}" data-i="${i}" style="left:${L.cx[i]-S2/2}px;width:${S2}px;--vw:${vg}px" role="button" tabindex="0" aria-label="${s.n}"><div class="vg" style="background-image:url(${art(s.cover)})"></div><div class="vlabel">${s.n}</div></div>`}).join('')}
  <div class="outro-panel" style="left:${intro+O.length*S2}px;width:${outro}px"><img src="${ip('zq_love')}" alt=""><h3>长卷到此，出发吧</h3><p style="color:var(--ink2);max-width:20em">九个地方都认识了。挑几个拼成一天的行程，朱雀帮你算好怎么走。</p><a class="btn red" href="#go">去规划行程</a></div>`;
  $$('.stop',track).forEach(el=>{const go=()=>{const i=+el.dataset.i;if(i===curI)openDetail(el.dataset.id);else goStop(i)};el.onclick=go;el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}}});
@@ -86,9 +86,9 @@ function applyRoute(){const r=R[route];
  const y=L.th*.22;let d='';r.ids.forEach((id,k)=>{const X=L.cx[O.indexOf(id)];if(!k)d=`M${X} ${y}`;else{const P=L.cx[O.indexOf(r.ids[k-1])];d+=` Q${(P+X)/2} ${y-L.th*.16} ${X} ${y}`}});
  g.innerHTML=`<path d="${d}" fill="none" stroke="#B23A2E" stroke-width="3" stroke-dasharray="10 8" stroke-linecap="round"/>`;curI=-2;update()}
 function markStops(){$$('.stop',track).forEach(el=>{$('.got',el)?.remove();if(stamps.includes(el.dataset.id))el.insertAdjacentHTML('beforeend','<span class="got">已盖章</span>')})}
-function txOf(){const top=sec.getBoundingClientRect().top;return Math.max(0,Math.min(L.W-L.vw,-top))}
-function goStop(i){i=Math.max(0,Math.min(O.length-1,i));const tx=Math.max(0,Math.min(L.W-L.vw,L.cx[i]-L.vw/2));scrollTo({top:sec.offsetTop+tx,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
-function update(){const tx=txOf();track.style.transform=`translate3d(${-tx}px,0,0)`;
+function txOf(){if(L.mob)return Math.max(0,Math.min(L.W-L.vw,scX.scrollLeft));const top=sec.getBoundingClientRect().top;return Math.max(0,Math.min(L.W-L.vw,-top))}
+function goStop(i){i=Math.max(0,Math.min(O.length-1,i));const tx=Math.max(0,Math.min(L.W-L.vw,L.cx[i]-L.vw/2));if(L.mob){scX.scrollTo({left:tx,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});return}scrollTo({top:sec.offsetTop+tx,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
+function update(){const tx=txOf();track.style.transform=L.mob?'none':`translate3d(${-tx}px,0,0)`;
  const c=tx+L.vw/2;let i=Math.round((c-L.intro)/L.S-.5);const inRange=c>L.intro-L.S*.2&&c<L.intro+O.length*L.S+L.S*.2;i=Math.max(0,Math.min(O.length-1,i));
  $('#scFill').style.width=Math.min(100,Math.max(0,(c-L.intro)/(O.length*L.S)*100))+'%';
  const ni=inRange?i:-1;if(ni!==curI){curI=ni;renderCard()}}
@@ -110,7 +110,7 @@ function fly(t){const tx=txOf();vel=vel*.85+(tx-lastTx)*.15;lastTx=tx;
  const y=Math.sin(t/600)*8,rot=Math.max(-14,Math.min(14,vel*.6));flyer.style.transform=`translateY(${y}px) rotate(${rot}deg) scaleX(${vel<-1?-1:1})`;
  if(secVisible)requestAnimationFrame(fly)}
 let secVisible=false;new IntersectionObserver(es=>{secVisible=es[0].isIntersecting;if(secVisible)requestAnimationFrame(fly)}).observe(sec);
-addEventListener('scroll',update,{passive:true});
+addEventListener('scroll',update,{passive:true});scX.addEventListener('scroll',update,{passive:true});
 let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{if(Math.abs(innerWidth-L.vw)>40||Math.abs(innerHeight-L.vh)>120)layout()},150)});
 addEventListener('keydown',e=>{if(!secVisible||document.activeElement.closest('input,select,textarea,.gpanel'))return;if(!$('#detail').hidden)return;const r=sec.getBoundingClientRect();if(r.top>0||r.bottom<innerHeight)return;
  if(e.key==='ArrowRight'){e.preventDefault();goStop(curI+1)}if(e.key==='ArrowLeft'){e.preventDefault();goStop(curI-1)}});

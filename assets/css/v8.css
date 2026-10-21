@@ -19,3 +19,17 @@
 .rn8{font-size:13.5px;color:var(--ink3);line-height:1.75;margin-top:16px}.rn8 a{color:var(--red);text-decoration:underline;text-underline-offset:3px}
 @media(max-width:720px){.rw8{grid-template-columns:1fr;gap:16px}.rv8{width:88px}}
 @media(prefers-reduced-motion:reduce){.rb8 canvas,.rk8,.rbar8 i{transition:none}}
+/* 手机：长卷改为左右滑动（滑动方向 = 展开方向） */
+.sc-x{display:contents}
+@media(max-width:720px){
+ .scrollsec.mobx .sc-x{display:block;position:absolute;left:0;right:0;top:150px;bottom:250px;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:none}
+ .scrollsec.mobx .sc-x::-webkit-scrollbar{display:none}
+ .scrollsec.mobx .sc-x .sc-track{top:0;bottom:0;height:100%;transform:none!important}
+ .scrollsec.mobx .intro-panel{scroll-snap-align:start}
+ .scrollsec.mobx .stop{scroll-snap-align:center}
+ .scrollsec.mobx .outro-panel{scroll-snap-align:end}
+ /* iOS Safari：竖排标题在 flex 中宽度计算有误，显式给宽 */
+ .kai-title .tv,.kai-title .tside{flex:none}
+ .tv h1{width:1em;line-height:1}
+ .vline{line-height:1.6;width:calc(1.6em + 13px);box-sizing:border-box}
+}
