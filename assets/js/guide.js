@@ -6,6 +6,7 @@ let who='zq',open=false,idleT,ctx='top',curSite=null;
 const NM={zq:'朱雀',bh:'白虎'};
 /* 问答库：k 关键词，a 回答（可含 [[动作|文字]] 链接），w 谁来答，m 表情 */
 const QA=[
+ {k:['狮子山门票','楚王陵门票','汉文化景区','通票','兵马俑门票','狮子山多少钱'],w:'bh',m:'joy',a:'狮子山楚王陵不单独卖票，它在徐州汉文化景区里：买一张通票，成人90元，就能看楚王陵、汉兵马俑博物馆、水下兵马俑博物馆和汉画像石长廊等。开放时间以景区公示为准。'},
  {k:['你是谁','你们是谁','朱雀','白虎','四神','介绍一下你'],w:'zq',m:'proud',a:'我是朱雀，它是白虎！我们来自汉代的“四神”——青龙、白虎、朱雀、玄武。汉墓和汉画像石里常能看到我们。我负责带路和交通，白虎负责讲文化、陪你探墓。'},
  {k:['彭城','为什么叫','古称','名字'],w:'bh',m:'joy',a:'徐州古称“彭城”。相传尧帝封彭祖于此，建大彭氏国，“彭城”之名由此而来。项羽定都、刘邦故里，所以有“彭城自古帝王州”的说法。'},
  {k:['两汉','汉文化','汉代','刘邦'],w:'bh',m:'wow',a:'“两汉文化看徐州”。汉高祖刘邦是沛县人，西汉在这里分封了十二代楚王，留下大量楚王陵墓。汉墓、汉兵马俑、汉画像石，被称为“汉代三绝”。想看的话：[[site:gs|龟山汉墓]]、[[site:bwg|徐州博物馆]]。'},
@@ -100,9 +101,10 @@ function renderChips(){chips.innerHTML=(CHIPS[ctx]||CHIPS.top).map(t=>`<button>$
 function toggle(v){open=v===undefined?!open:v;panel.hidden=!open;av.setAttribute('aria-expanded',open);bub.hidden=true;if(open){if(!msgs.children.length)add('你好！我是朱雀，旁边是白虎。想去哪儿、怎么走、有什么故事，都可以问我们。','zq','joy');renderChips();setTimeout(()=>$('#gin').focus({preventScroll:true}),50)}}
 av.onclick=()=>toggle();['askTop','askTab'].forEach(i=>{const b=document.getElementById(i);if(b)b.onclick=e=>{e.preventDefault();toggle(true)}});$('#gx').onclick=()=>toggle(false);$$('.gwho button').forEach(b=>b.onclick=()=>{setWho(b.dataset.who);add(b.dataset.who==='bh'?'我是白虎，文物和历史问我就好。':'我是朱雀，问路找我！',b.dataset.who,'joy')});
 $('#gform').onsubmit=e=>{e.preventDefault();const i=$('#gin');ask(i.value);i.value=''};
-let bt;function tip(w,m,t){if(open)return;clearTimeout(bt);bub.innerHTML=X.esc(t);bub.hidden=false;avi.src=face(w,m);bt=setTimeout(()=>{bub.hidden=true;avi.src=face(who,'joy')},6500)}
+let bt,tipN=0;function tip(w,m,t){if(open||tipN>=1||innerWidth<720)return;tipN++;tipAt=performance.now();clearTimeout(bt);bub.innerHTML=X.esc(t);bub.hidden=false;avi.src=face(w,m);bt=setTimeout(()=>{bub.hidden=true;avi.src=face(who,'joy')},3800)}
+addEventListener('scroll',()=>{if(!bub.hidden&&performance.now()-tipAt>1200){bub.hidden=true;avi.src=face(who,'joy')}},{passive:true});let tipAt=0;
 bub.onclick=()=>toggle(true);
-const shown=new Set();X.on('section',id=>{ctx=id;if(open)renderChips();if(TIPS[id]&&!shown.has(id)){shown.add(id);const [w,m,t]=TIPS[id];setTimeout(()=>tip(w,m,t),600)}});
+const shown=new Set();X.on('section',id=>{ctx=id;if(open)renderChips();if(TIPS[id]&&!shown.has(id)){shown.add(id);const [w,m,t]=TIPS[id];setTimeout(()=>{if(ctx===id)tip(w,m,t)},900)}});
 X.on('detail',id=>{curSite=id;const n=window.SITES.find(x=>x.id===id).n;CHIPS.detail=[n+'几点开门？',n+'要门票吗？',n+'怎么去？'];ctx='detail';if(open)renderChips()});
 X.on('gamedone',()=>{});
 function wake(){clearTimeout(idleT);if(avi.dataset.sleep){delete avi.dataset.sleep;avi.src=face(who,'joy')}idleT=setTimeout(()=>{if(open)return;avi.dataset.sleep=1;avi.src=face(who,'sleep')},50000)}

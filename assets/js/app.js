@@ -43,19 +43,19 @@ $('#scRoutes').innerHTML=`<button class="chip" aria-pressed="true" data-r="-1">�
 $$('#scRoutes .chip').forEach(b=>b.onclick=()=>{route=+b.dataset.r;$$('#scRoutes .chip').forEach(x=>x.setAttribute('aria-pressed',x===b));applyRoute();const r=R[route];if(r)goStop(O.indexOf(r.ids[0]));emit('route',route)});
 function layout(){
  const vw=innerWidth,vh=innerHeight,mob=vw<720;
- const th=Math.max(260,vh-(mob?400:270));
- const S2=mob?vw*.86:Math.max(330,Math.min(560,vw*.4));
+ const th=Math.max(260,vh-(mob?440:400));
+ const S2=mob?vw*.86:Math.max(330,Math.min(500,vw*.36));
  const intro=mob?vw*.9:Math.min(vw*.62,620),outro=mob?vw:Math.max(vw*.55,520);
  const W=intro+O.length*S2+outro;
- L={vw,vh,th,S:S2,intro,W,cx:O.map((_,i)=>intro+S2*(i+.5)),mob};
- track.style.width=W+'px';sec.style.height=(mob?vh:(W-vw+vh))+'px';sec.classList.toggle('mobx',mob);if(!mob)scX.scrollLeft=0;
+ L={vw,vh,th,S:S2,intro,W,cx:O.map((_,i)=>intro+S2*(i+.5)),mob,K:mob?1:1.7};
+ track.style.width=W+'px';sec.style.height=(mob?vh:Math.round((W-vw)/L.K+vh))+'px';sec.classList.toggle('mobx',mob);if(!mob)scX.scrollLeft=0;
  const vg=Math.min(S2*(mob?1:1.02),th*1.38);
  track.innerHTML=`<svg class="sc-bg" width="${W}" height="${th}" viewBox="0 0 ${W} ${th}" aria-hidden="true">${bgSVG()}</svg>
  <div class="intro-panel" style="width:${intro}px"><div class="row"><div class="big">彭城<em>七里</em></div><div class="meta"><b>一幅从北到南的长卷</b>从城西北的龟山汉墓出发，跨过故黄河，沿着彭城七里一路向南，中途向东拐去狮子山，最后到云龙山水。<br><br>${mob?'向左滑动，展开长卷 →':'向下滚动 →'}</div></div></div>
  ${O.map((id,i)=>{const s=get(id);return `<div class="stop" data-id="${id}" data-i="${i}" style="left:${L.cx[i]-S2/2}px;width:${S2}px;--vw:${vg}px" role="button" tabindex="0" aria-label="${s.n}"><div class="vg" style="background-image:url(${art(s.cover)})"></div><div class="vlabel">${s.n}</div></div>`}).join('')}
  <div class="outro-panel" style="left:${intro+O.length*S2}px;width:${outro}px"><img src="${ip('zq_love')}" alt=""><h3>长卷到此，出发吧</h3><p style="color:var(--ink2);max-width:20em">九个地方都认识了。挑几个拼成一天的行程，朱雀帮你算好怎么走。</p><a class="btn red" href="#go">去规划行程</a></div>`;
  $$('.stop',track).forEach(el=>{const go=()=>{const i=+el.dataset.i;if(i===curI)openDetail(el.dataset.id);else goStop(i)};el.onclick=go;el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}}});
- bar.innerHTML=`<div class="rail"></div><div class="fill" id="scFill"></div>`+O.map((id,i)=>`<button data-i="${i}" style="left:${(i+.5)/O.length*100}%" aria-label="跳到${get(id).n}"><span>${get(id).g}</span></button>`).join('');
+ bar.innerHTML=`<div class="rail"></div><div class="fill" id="scFill"></div>`+O.map((id,i)=>`<button data-i="${i}" style="left:${(i+.5)/O.length*100}%" aria-label="跳到${get(id).n}"><span>${get(id).g}</span><em aria-hidden="true">${get(id).n}</em></button>`).join('');
  $$('button',bar).forEach(b=>b.onclick=()=>goStop(+b.dataset.i));
  applyRoute();markStops();curI=-2;update();
 }
@@ -86,8 +86,8 @@ function applyRoute(){const r=R[route];
  const y=L.th*.22;let d='';r.ids.forEach((id,k)=>{const X=L.cx[O.indexOf(id)];if(!k)d=`M${X} ${y}`;else{const P=L.cx[O.indexOf(r.ids[k-1])];d+=` Q${(P+X)/2} ${y-L.th*.16} ${X} ${y}`}});
  g.innerHTML=`<path d="${d}" fill="none" stroke="#B23A2E" stroke-width="3" stroke-dasharray="10 8" stroke-linecap="round"/>`;curI=-2;update()}
 function markStops(){$$('.stop',track).forEach(el=>{$('.got',el)?.remove();if(stamps.includes(el.dataset.id))el.insertAdjacentHTML('beforeend','<span class="got">已盖章</span>')})}
-function txOf(){if(L.mob)return Math.max(0,Math.min(L.W-L.vw,scX.scrollLeft));const top=sec.getBoundingClientRect().top;return Math.max(0,Math.min(L.W-L.vw,-top))}
-function goStop(i){i=Math.max(0,Math.min(O.length-1,i));const tx=Math.max(0,Math.min(L.W-L.vw,L.cx[i]-L.vw/2));if(L.mob){scX.scrollTo({left:tx,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});return}scrollTo({top:sec.offsetTop+tx,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
+function txOf(){if(L.mob)return Math.max(0,Math.min(L.W-L.vw,scX.scrollLeft));const top=sec.getBoundingClientRect().top;return Math.max(0,Math.min(L.W-L.vw,-top*L.K))}
+function goStop(i){i=Math.max(0,Math.min(O.length-1,i));const tx=Math.max(0,Math.min(L.W-L.vw,L.cx[i]-L.vw/2));if(L.mob){scX.scrollTo({left:tx,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});return}scrollTo({top:sec.offsetTop+Math.ceil(tx/L.K),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
 function update(){const tx=txOf();track.style.transform=L.mob?'none':`translate3d(${-tx}px,0,0)`;
  const c=tx+L.vw/2;let i=Math.round((c-L.intro)/L.S-.5);const inRange=c>L.intro-L.S*.2&&c<L.intro+O.length*L.S+L.S*.2;i=Math.max(0,Math.min(O.length-1,i));
  $('#scFill').style.width=Math.min(100,Math.max(0,(c-L.intro)/(O.length*L.S)*100))+'%';
@@ -97,10 +97,11 @@ function renderCard(){$$('.stop',track).forEach(el=>el.classList.toggle('cur',+e
  const id=O[curI],s=get(id),r=R[route];let k=`第 ${curI+1} / ${O.length} 站 · ${s.tag}`,nxt=O[curI+1],prv=O[curI-1];
  if(r&&r.ids.includes(id)){const j=r.ids.indexOf(id);k=`${r.n} · 第 ${j+1} / ${r.ids.length} 站`;nxt=r.ids[j+1];prv=r.ids[j-1]}
  const p=nxt?path(id,nxt):null;
- card.innerHTML=`<div class="nav2"><button aria-label="上一站" ${prv?'':'disabled style="opacity:.3"'} data-g="${prv||''}">‹</button><button aria-label="下一站" ${nxt?'':'disabled style="opacity:.3"'} data-g="${nxt||''}">›</button></div>
- <div class="k">${k}</div><h3>${s.n}</h3><p>${s.line}。${s.lead}</p>
- ${p?`<div class="leg">下一站 <b>${get(nxt).n}</b>：${modes(p)}，约 ${p.min} 分钟</div>`:''}
- <div class="acts"><button class="btn small" data-d="${id}">看详情</button>${GAMES.includes(id)?`<button class="btn small red" data-p="${id}">去玩：${s.game[0]}</button>`:''}</div>`;
+ card.innerHTML=`<div class="cl"><div class="k">${k}</div><h3>${s.n}<small>${s.line}</small></h3>
+ ${p?`<div class="leg">下一站 <b>${get(nxt).n}</b>：${modes(p)}，约 ${p.min} 分钟</div>`:''}</div>
+ <div class="cr"><div class="nav2"><button aria-label="上一站" ${prv?'':'disabled style="opacity:.3"'} data-g="${prv||''}">‹</button><button aria-label="下一站" ${nxt?'':'disabled style="opacity:.3"'} data-g="${nxt||''}">›</button></div>
+ <div class="acts"><button class="btn small" data-d="${id}">看详情</button>${GAMES.includes(id)?`<button class="btn small red" data-p="${id}">去玩：${s.game[0]}</button>`:''}</div></div>`;
+ card.classList.remove('cswap');void card.offsetWidth;card.classList.add('cswap');
  $$('[data-g]',card).forEach(b=>b.onclick=()=>b.dataset.g&&goStop(O.indexOf(b.dataset.g)));
  $('[data-d]',card).onclick=()=>openDetail(id);$('[data-p]',card)&&($('[data-p]',card).onclick=()=>goPlay(id));emit('stop',id)}
 let lastTx=0,vel=0,mood='',t0=performance.now(),still=0;
@@ -194,7 +195,7 @@ function status(id){const h=(get(id)||{}).hrs;if(!h)return null;if(h.all)return 
  if(n.t<tm(o))return {c:'soon',t:`未开门 · ${o} 开放${sx}`};
  if(n.t>=tm(e))return {c:'off',t:`${n.t>=tm(c)?'今日已结束开放':'已停止入园'}${sx}`};
  return {c:tm(e)-n.t<=60?'soon':'ok',t:`开放中 · ${e} 停止入园`}}
-const stPill=id=>{const s=status(id);if(!s){const x=get(id);return x&&x.info?`<span class="st unk"><i></i>开放时间待核实 · 以景区公示为准</span>`:''}return `<span class="st ${s.c}"><i></i>${s.t}</span>`};
+const stPill=id=>{const s=status(id);if(!s){const x=get(id);return x&&x.info?`<span class="st unk"><i></i>开放时间以景区公告为准</span>`:''}return `<span class="st ${s.c}"><i></i>${s.t}</span>`};
 /* ---------- v5 详情页 ---------- */
 const D=$('#detail');let lastFocus=null,curD=null;
 const TOC=[['d-story','故事'],['d-culture','文化'],['d-tl','年表'],['d-food','美食'],['d-go','怎么到'],['d-rub','拓印'],['d-src','出处']];

@@ -14,3 +14,10 @@ window.SRC_ALL.push(['原典引文（《史记》《礼记》《论衡》《抱�
 (function(){const O=window.ORDER;if(!O.includes('sz'))O.splice(O.indexOf('bwg')+1,0,'sz');
  const r=(window.ROUTES||[]).find(r=>r.id==='r2');if(r&&!r.ids.includes('sz'))r.ids.splice(1,0,'sz');
  window.EDGES&&EDGES.push(['sz','yls','打车',15,'打车前往云龙山（以导航为准）','打车前往城东狮子山']);})();
+/* 狮子山票务（团队核对） */
+(function(){const s=SITES.find(x=>x.id==='sz');if(!s)return;
+Object.assign(s.info,{tix:'不单独售票，含在徐州汉文化景区通票内：成人90元/人',book:'购买汉文化景区通票，现场或线上均可，以景区公告为准',src:'景区公开票务信息，团队核对（开放时间待核实）',lv:'b'});
+s.go.tip='楚王陵不单独售票，买徐州汉文化景区通票（成人90元）即可一票游览楚王陵、汉兵马俑博物馆、水下兵马俑博物馆、汉画像石长廊等；开放时间以景区公示为准。';
+const st=(s.story||[]).find(x=>x.k==='今天');if(st)st.d='楚王陵、汉兵马俑博物馆、水下兵马俑博物馆、汉画像石长廊都在徐州汉文化景区里，一张通票（成人90元）就能一路看完。开放时间请以景区公示为准。';
+if(window.SRC&&SRC.sz)SRC.sz[2]=['门票（汉文化景区通票90元）','景区公开票务信息，团队核对','b'];
+})();
