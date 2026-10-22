@@ -30,14 +30,15 @@ let zt;function hop(b){clampPv(b);if(RM)return;clearTimeout(zt);const d=$('.dot'
  pins.addEventListener('pointerout',e=>{const b=e.target.closest('.pin2');if(b&&!b.contains(e.relatedTarget))unhop()});
  pins.addEventListener('focusin',e=>{const b=e.target.closest('.pin2');b&&hop(b)});pins.addEventListener('focusout',unhop);
  /* 首屏标题与景点签避让 */
+ document.body.insertAdjacentHTML('beforeend','<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="rough10"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="1.4"/></filter></svg>');
  const vl=document.createElement('p');vl.className='vl10 serif';vl.textContent='一座彭城，半部汉史';vl.setAttribute('aria-hidden','true');$('.tdesc')?.prepend(vl);
  const hit=(a,b)=>!(a.right<b.left||a.left>b.right||a.bottom<b.top||a.top>b.bottom);
- function fit(){if(innerWidth<721){hero.classList.remove('tight');return}hero.classList.remove('tight');
+ function fit(){if(innerWidth<721){hero.classList.remove('tight','tight2');return}hero.classList.remove('tight','tight2');
   const T=()=>$$('.kai-title .tv h1,.kai-title .tside,.kai-title .tdesc').map(e=>{const r=e.getBoundingClientRect();return {left:r.left-10,right:r.right+10,top:r.top-6,bottom:r.bottom+6}});
   const P=()=>$$('.pin2',pins).map(p=>[$('.dot',p).getBoundingClientRect(),$('.tag',p).getBoundingClientRect()]);
   const bad=()=>{const t=T();return P().some(([d,g])=>t.some(r=>hit(r,d)||hit(r,g)))};
-  if(bad())hero.classList.add('tight')}
- setTimeout(fit,60);let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(fit,200)});
+  if(bad()){hero.classList.add('tight');if(bad())hero.classList.add('tight2')}}
+ setTimeout(fit,60);document.fonts&&document.fonts.ready.then(fit);addEventListener('load',fit);let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(fit,200)});
 }
 
 /* ---------- 2 首屏活起来：云气、白鹤、湖面 ---------- */

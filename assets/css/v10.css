@@ -111,3 +111,33 @@
 @media(max-width:720px){.fqr10{display:none}}
 
 #sites.sec::before,#fy.sec::before,#go.sec::before{display:none}
+/* ===== v11 装裱签 + 朱文方印 ===== */
+.pin2 .tag{padding:5px 17px 5px 15px;gap:9px;background:#FBF7EF;border:0;border-top:1px solid #D8CCB4;border-bottom:1px solid #D8CCB4;border-radius:1px;box-shadow:0 8px 18px -10px rgba(60,40,20,.55);transition:padding .35s var(--out),transform .35s var(--out),box-shadow .35s}
+.pin2.lft .tag{padding:5px 15px 5px 17px}
+.pin2 .tag::before,.pin2 .tag::after,.pin2.lft .tag::after{content:"";display:block;position:absolute;top:-1px;bottom:-1px;left:auto;right:auto;width:7px;height:auto;margin:0;background:linear-gradient(90deg,#86684A,#A98B64 55%,#8C6E4E);opacity:1;transform:none;transition:background .35s}
+.pin2 .tag::before{left:0}.pin2 .tag::after,.pin2.lft .tag::after{right:0}
+.pin2 .seal{min-width:25px;height:25px;padding:0 2px;background:rgba(251,247,239,.6);color:#B23A2E;border:2px solid #B23A2E;border-radius:3px;box-shadow:none;font-size:13px;transform:rotate(-5deg);filter:url(#rough10);transition:transform .25s var(--out),background .25s}
+.pin2:hover .tag,.pin2:focus-visible .tag,.pin2.ex .tag{background:#FBF7EF;border-color:#D8CCB4;transform:translateY(-2px);padding-left:19px;padding-right:21px;box-shadow:0 14px 24px -12px rgba(60,40,20,.6)}
+.pin2.lft:hover .tag,.pin2.lft:focus-visible .tag,.pin2.lft.ex .tag{padding-left:21px;padding-right:19px}
+.pin2:hover .tag::before,.pin2:hover .tag::after,.pin2:focus-visible .tag::before,.pin2:focus-visible .tag::after,.pin2.ex .tag::before,.pin2.ex .tag::after{background:linear-gradient(90deg,#9C2E23,#C24A3C 55%,#A3342A)}
+.pin2:hover em,.pin2:focus-visible em,.pin2.ex em{color:var(--ink)}
+.pin2:hover .seal,.pin2:focus-visible .seal,.pin2.ex .seal{animation:press10 .38s var(--out)}
+@keyframes press10{0%{transform:rotate(-5deg) scale(1)}40%{transform:rotate(-5deg) scale(.82);background:rgba(178,58,46,.14)}100%{transform:rotate(-5deg) scale(1)}}
+/* 载入：签条展开，再盖印 */
+.hero.open .pin2 .tag{animation:unroll10 .7s var(--out) both;animation-delay:calc(var(--d) + .15s)}
+.hero.open .pin2.lft .tag{animation-name:unrollL10}
+.hero.open .pin2 .seal{animation:stampin10 .45s var(--out) both;animation-delay:calc(var(--d) + .75s)}
+.hero.open .pin2:hover .seal,.hero.open .pin2:focus-visible .seal,.hero.open .pin2.ex .seal{animation:press10 .38s var(--out);animation-delay:0s}
+@keyframes unroll10{from{clip-path:inset(-30px calc(100% - 7px) -30px -30px)}to{clip-path:inset(-30px -30px -30px -30px)}}
+@keyframes unrollL10{from{clip-path:inset(-30px -30px -30px calc(100% - 7px))}to{clip-path:inset(-30px -30px -30px -30px)}}
+@keyframes stampin10{from{opacity:0;transform:rotate(-12deg) scale(1.8)}70%{opacity:1;transform:rotate(-4deg) scale(.92)}to{opacity:1;transform:rotate(-5deg) scale(1)}}
+@media(max-width:720px){
+ .pin2 .tag{padding:3px 12px 3px 11px;gap:6px}.pin2.lft .tag{padding:3px 11px 3px 12px}
+ .pin2 .tag::before,.pin2 .tag::after,.pin2.lft .tag::after{width:5px}
+ .pin2 .seal{min-width:21px;height:21px;font-size:11.5px;border-width:1.6px;filter:none}
+ .pin2:hover .tag,.pin2.ex .tag{padding-left:13px;padding-right:15px}
+}
+/* 首屏避让二级：仍挡住时收起导语 */
+.hero.tight2 .tdesc>p:not(.vl10){display:none}
+.hero.tight2 .tdesc .cta{margin-top:8px}
+@media(prefers-reduced-motion:reduce){.hero.open .pin2 .tag,.hero.open .pin2 .seal,.pin2 .seal{animation:none!important}}
