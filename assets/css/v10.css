@@ -1,0 +1,113 @@
+/* v10：印章景点签、分界、动效、二维码 */
+/* ---- 1 景点签 ---- */
+.pin2{position:absolute;transform:translate(-9px,-50%);display:flex;align-items:center;gap:10px;opacity:0;transition:opacity .7s var(--d),translate .9s var(--d) var(--out);translate:0 14px;z-index:4;background:none;border:0;padding:0;cursor:pointer;font:inherit;color:inherit}
+.hero.open .pin2{opacity:1;translate:0 0}
+.pin2.lft{flex-direction:row-reverse;transform:translate(calc(-100% + 9px),-50%)}
+.pin2 .dot{position:relative;width:18px;height:18px;flex:none;border-radius:50%;background:radial-gradient(circle at 38% 35%,#D35A4C,#9C2E23);box-shadow:0 0 0 3px rgba(251,246,236,.92),0 3px 8px rgba(60,30,20,.35)}
+.pin2 .dot::before,.pin2 .dot::after{content:"";position:absolute;inset:-7px;border-radius:50%;border:1.5px solid #B23A2E;opacity:0;animation:rip2 2.8s var(--d) infinite}
+.pin2 .dot::after{animation-delay:calc(var(--d) + 1.4s)}
+@keyframes rip2{0%{transform:scale(.6);opacity:.7}100%{transform:scale(2.1);opacity:0}}
+.pin2:hover .dot::before,.pin2:focus-visible .dot::before,.pin2.ex .dot::before{animation-duration:1.1s}
+.pin2 .tag{position:relative;display:flex;align-items:center;gap:8px;padding:4px 22px 4px 4px;background:rgba(251,247,239,.95);border:1px solid #CDBFA3;border-radius:3px;box-shadow:0 8px 20px -10px rgba(60,40,20,.5);transition:background .25s,transform .35s var(--out)}
+.pin2.lft .tag{padding:4px 4px 4px 22px;flex-direction:row-reverse}
+.pin2 .tag::before,.pin2 .tag::after{content:"";position:absolute;top:50%;width:14px;height:10px;margin-top:-5px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 10'%3E%3Cpath d='M1 8c0-4 3-7 6.5-7S13 3.5 13 5.6c0 1.9-1.5 3-3 3-1.7 0-2.6-1.2-2.6-2.4 0-1 .8-1.8 1.7-1.8' fill='none' stroke='%23B23A2E' stroke-width='1.3' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat;opacity:.8}
+.pin2 .tag::before{display:none}
+.pin2 .tag::after{right:5px}
+.pin2.lft .tag::after{right:auto;left:5px;transform:scaleX(-1)}
+.pin2 .seal{flex:none;display:grid;place-items:center;min-width:24px;height:24px;padding:0 3px;background:#B23A2E;color:#FBF0E4;font-family:var(--serif);font-size:12px;font-weight:900;letter-spacing:0;border-radius:2px;box-shadow:inset 0 0 0 1.5px rgba(251,240,228,.55);transform:rotate(-4deg)}
+.pin2 em{font-style:normal;font-family:var(--serif);font-weight:800;font-size:15px;letter-spacing:.14em;color:var(--ink);white-space:nowrap}
+.pin2:hover .tag,.pin2:focus-visible .tag,.pin2.ex .tag{background:#1F1A15;border-color:#1F1A15;transform:translateY(-2px)}
+.pin2:hover em,.pin2:focus-visible em,.pin2.ex em{color:#FBF0E4}
+.pin2:focus-visible{outline:none}.pin2:focus-visible .tag{outline:3px solid #B23A2E;outline-offset:3px}
+/* 悬停展开的预览卡 */
+.pin2 .pv{position:absolute;left:28px;top:calc(50% + 22px);width:260px;display:flex;gap:12px;padding:10px;background:#FBF7EF;border:1px solid #CDBFA3;border-radius:6px;box-shadow:0 22px 50px -20px rgba(40,25,10,.55);opacity:0;visibility:hidden;transform:translateY(-6px) scale(.97);transform-origin:top left;transition:opacity .25s,transform .3s var(--out),visibility 0s .3s;pointer-events:none;text-align:left;z-index:6}
+.pin2.lft .pv{left:auto;right:28px;transform-origin:top right}
+.pin2:hover .pv,.pin2:focus-visible .pv,.pin2.ex .pv{opacity:1;visibility:visible;transform:none;transition:opacity .25s,transform .3s var(--out),visibility 0s}
+.pin2:hover,.pin2:focus-visible,.pin2.ex{z-index:8}
+.pv img{width:84px;height:84px;object-fit:cover;border-radius:4px;flex:none;background:#EFE6D6}
+.pvt{display:flex;flex-direction:column;gap:3px;min-width:0}
+.pvt strong{font-family:var(--serif);font-size:17px;font-weight:900;letter-spacing:.08em;color:var(--ink)}
+.pvt small{font-size:12.5px;line-height:1.5;color:var(--ink2)}
+.pvt .st{align-self:flex-start;font-size:11px;padding:2px 8px 2px 6px;margin-top:2px}
+.pvt .go{font-size:12px;font-weight:700;color:#B23A2E;margin-top:2px}
+.zq-hop{position:absolute;z-index:7;width:58px;left:70%;top:20%;opacity:0;pointer-events:none;filter:drop-shadow(0 8px 10px rgba(60,40,20,.3));transition:left .9s var(--out),top .9s var(--out),opacity .4s;animation:zqb 1.6s ease-in-out infinite}
+.zq-hop.on{opacity:1}.zq-hop.flip{scale:-1 1}
+@keyframes zqb{50%{translate:0 -6px}}
+@media(max-width:720px){
+ .pin2 .tag{padding:3px 18px 3px 3px}.pin2.lft .tag{padding:3px 3px 3px 18px}
+ .pin2 .seal{min-width:20px;height:20px;font-size:11px}
+ .pin2 em{font-size:12.5px;letter-spacing:.08em}
+ .pin2 .dot{width:15px;height:15px}
+ .pin2 .pv{width:220px}.pv img{width:68px;height:68px}
+ .zq-hop{width:44px}
+}
+/* 首屏避让：大字缩小，竖排标语改到导语上方 */
+.vl10{display:none}
+.hero.tight .tv h1{font-size:min(10.5vw,13vh)}
+.hero.tight .tside{display:none}
+.hero.tight .vl10{display:block;font-size:17px;letter-spacing:.4em;color:var(--red);font-weight:700;margin-bottom:10px}
+.hero.tight .kai-title{top:clamp(84px,11vh,120px)}
+/* ---- 2 首屏动起来 ---- */
+.mist10{position:absolute;left:-8%;width:116%;height:14%;pointer-events:none}
+.mist10{filter:blur(5px);opacity:.45}
+.mist10.m1{top:30%;animation:mst 34s ease-in-out infinite alternate;transform:translateX(calc(var(--px,0px) * 1.6))}
+.mist10.m2{top:56%;height:9%;animation:mst 46s ease-in-out infinite alternate-reverse;opacity:.3}
+@keyframes mst{from{translate:-3% 0}to{translate:3% 0}}
+.crane10{position:absolute;top:7%;left:-12%;width:110px;pointer-events:none;opacity:.75;animation:crn 48s linear infinite 3s}
+.crane10 .w{animation:flap 1.4s ease-in-out infinite;transform-origin:center}
+.crane10 .w.b{animation-delay:.5s}
+@keyframes crn{0%{translate:0 0}50%{translate:60vw -18px}100%{translate:125vw 6px}}
+@keyframes flap{50%{transform:scaleY(.45)}}
+.rip10{position:absolute;width:46px;height:12px;margin:-6px 0 0 -23px;border-radius:50%;border:1.5px solid rgba(255,255,255,.85);opacity:0;pointer-events:none;animation:rp 4.6s ease-out infinite}
+@keyframes rp{0%{transform:scale(.3);opacity:0}20%{opacity:.9}100%{transform:scale(1.6);opacity:0}}
+/* ---- 3 分界 ---- */
+.dv10{position:absolute;left:0;right:0;top:0;transform:translateY(-100%);pointer-events:none;z-index:2;overflow:hidden}
+.dv10 .ly{position:absolute;left:-4%;width:108%;bottom:0;height:100%;display:block;will-change:transform}
+.dv-paper{height:40px;margin-top:1px;filter:drop-shadow(0 -3px 4px rgba(60,40,20,.08))}
+.dv-mtn{height:140px;margin-top:1px}
+.dv-cloud{height:80px;margin-top:1px}
+.dv-water{height:64px;margin-top:1px}
+.dv-water .flow{stroke-dasharray:90 26 30 20;animation:flw 6s linear infinite}
+.dv-water .flow.b{animation-duration:9s;animation-direction:reverse}
+@keyframes flw{to{stroke-dashoffset:-240}}
+#sites.sec{padding-bottom:150px}
+#sanjue.sec{padding-bottom:150px}
+#fy.sec{padding-bottom:120px}
+#sanjue::after{bottom:104px}
+@media(max-width:720px){.dv-mtn{height:80px}.dv-cloud{height:52px}.dv-water{height:44px}.dv-paper{height:26px}
+ #sites.sec{padding-bottom:96px}#sanjue.sec{padding-bottom:100px}#fy.sec{padding-bottom:80px}#sanjue::after{bottom:66px}}
+/* ---- 4 标题盖印 + 显现；卡片依次展开 ---- */
+.stamp10{display:inline-grid;place-items:center;min-width:34px;height:34px;padding:0 4px;margin-right:12px;background:#B23A2E;color:#FBF0E4;font-family:var(--serif);font-weight:900;font-size:15px;letter-spacing:.04em;border-radius:3px;box-shadow:inset 0 0 0 2px rgba(251,240,228,.5);transform:rotate(-6deg);vertical-align:middle}
+#sanjue .stamp10{background:#C9A15E;color:#221814}
+.sh5 .eye{display:flex;align-items:center}
+.rv-h .stamp10{opacity:0;transform:rotate(-6deg) scale(1.8)}
+.rv-h.in .stamp10{animation:stp .55s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes stp{0%{opacity:0;transform:rotate(-14deg) scale(1.8)}60%{opacity:1;transform:rotate(-4deg) scale(.92)}100%{opacity:1;transform:rotate(-6deg) scale(1)}}
+.rv-h h2{clip-path:inset(-10% 100% -10% 0);transition:clip-path 1.1s cubic-bezier(.65,0,.35,1) .25s}
+.rv-h.in h2{clip-path:inset(-10% -2% -10% 0)}
+.rv-h .eye span,.rv-h>p{opacity:0;translate:0 10px;transition:opacity .7s .5s,translate .7s .5s}
+.rv-h.in .eye span,.rv-h.in>p{opacity:1;translate:0 0}
+.rv10{opacity:0;translate:0 28px;transition:opacity .8s var(--rd,0ms),translate .9s var(--out,ease-out) var(--rd,0ms)}
+.rv10.in{opacity:1;translate:0 0}
+@media(prefers-reduced-motion:reduce){.rv10,.rv-h h2,.rv-h .eye span,.rv-h>p,.rv-h .stamp10{opacity:1!important;translate:none!important;clip-path:none!important;animation:none!important;transform:rotate(-6deg)!important}.mist10,.crane10,.rip10,.zq-hop,.dv-water .flow,.pin2 .dot::before,.pin2 .dot::after{animation:none!important}.crane10,.rip10{display:none}}
+/* ---- 5 二维码 ---- */
+.qr10,.qr10-mini{display:none}
+@media(min-width:900px) and (hover:hover){
+ .qr10{display:flex;position:absolute;left:28px;bottom:28px;z-index:6;align-items:center;gap:12px;padding:10px 14px 10px 10px;background:rgba(251,247,239,.95);border:1px solid #CDBFA3;border-radius:6px;box-shadow:0 16px 40px -20px rgba(40,25,10,.5);opacity:0;transition:opacity .8s 3.2s}
+ .hero.open .qr10{opacity:1}
+ .qr10[hidden]{display:none}
+ .qr10 img{width:84px;height:84px;display:block;border-radius:3px}
+ .qr10 p{font-size:12.5px;line-height:1.6;color:var(--ink2);writing-mode:horizontal-tb}
+ .qr10 p b{display:block;font-family:var(--serif);font-size:16px;font-weight:900;letter-spacing:.12em;color:var(--ink)}
+ .qr10 .qx{position:absolute;right:2px;top:0;width:26px;height:26px;border:0;background:none;color:var(--ink2);font-size:16px;cursor:pointer;line-height:1}
+ .qr10 .qx:hover{color:#B23A2E}
+ .qr10-mini{display:block;position:absolute;left:28px;bottom:28px;z-index:6;padding:8px 14px;min-height:40px;border-radius:999px;border:1px solid #CDBFA3;background:rgba(251,247,239,.95);font-size:13px;font-weight:700;color:var(--ink);cursor:pointer}
+ .qr10-mini[hidden]{display:none}
+}
+.fqr10{display:inline-flex;align-items:center;gap:12px;margin:0 auto 18px;padding:8px 14px 8px 8px;border:1px solid var(--line6,#d9cbb2);border-radius:6px;background:#FBF7EF;text-align:left}
+.fqr10 img{width:72px;height:72px;display:block}
+.fqr10 p{font-size:12px;color:var(--ink2);line-height:1.5}
+.fqr10 b{display:block;font-size:14px;color:var(--ink)}
+@media(max-width:720px){.fqr10{display:none}}
+
+#sites.sec::before,#fy.sec::before,#go.sec::before{display:none}
